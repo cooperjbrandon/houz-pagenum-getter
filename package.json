@@ -1,0 +1,24 @@
+{
+  "name": "houz-pagenum-getter",
+  "version": "1.0.0",
+  "description": "get pagenums for each city",
+  "main": "pagenum-fetcher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cooperjbrandon/houz-pagenum-getter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cooperjbrandon/houz-pagenum-getter/issues"
+  },
+  "homepage": "https://github.com/cooperjbrandon/houz-pagenum-getter",
+  "dependencies": {
+    "amqp": "^0.2.4",
+    "cli-color": "^0.3.3",
+    "moment": "^2.9.0"
+  }
+}
