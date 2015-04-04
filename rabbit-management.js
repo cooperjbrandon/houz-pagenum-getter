@@ -1,15 +1,17 @@
-var amqp, clc, moment, beginFetchOfPageNums,
-		connection, routingKey,
+var amqp, clc, moment, beginFetchOfPageNums, config,
+		connection, bindingRoutingKey, publishRoutingKey,
 		queue, queueName, queueConnected,
 		exchange, exchangeName, exchangeConnected;
 
 amqp = require('amqp');
 clc = require('cli-color');
 moment = require('moment');
+config = require('houz-config');
 
-exchangeName = 'houz-exchange';
-queueName = 'houz-queue-cityname';
-routingKey = 'citynames';
+exchangeName = config.exchangeName;
+queueName = config.queueName.cities;
+bindingRoutingKey = config.routingKey.cities;
+publishRoutingKey = config.routingKey.pages;
 
 var beginSetup = function(beginFetch) {
 	beginFetchOfPageNums = beginFetch;
@@ -35,7 +37,7 @@ var connectToQueue = function() {
 
 var bindQueueToExchange = function() {
 	console.log(clc.blue('The queue "' + queue.name + '" is ready'));
-	queue.bind(exchangeName, routingKey); //bind to exchange w/ routingKey (most likely already done; this is just incase)
+	queue.bind(exchangeName, bindingRoutingKey); //bind to exchange w/ bindingRoutingKey (most likely already done; this is just incase)
 	queue.on('queueBindOk', function() { queueOrExchangeReady('queue'); });
 };
 
@@ -44,7 +46,7 @@ var queueOrExchangeReady = function(type) {
 		console.log(clc.bgBlueBright('The exchange "' +exchange.name+ '" is ready'));
 		exchangeConnected = true;
 	} else if (type === 'queue') {
-		console.log(clc.blue('The queue "' +queue.name+ '" is bound to the exchange "' +exchangeName+ '" with the routing key "' +routingKey+ '"'));
+		console.log(clc.blue('The queue "' +queue.name+ '" is bound to the exchange "' +exchangeName+ '" with the routing key "' +bindingRoutingKey+ '"'));
 		queueConnected = true;
 	}
 	if (exchangeConnected && queueConnected) { subscribeToQueue(); }
@@ -62,7 +64,7 @@ var messageReceiver = function(message, headers, deliveryInfo, messageObject) {
 var handlePageNums = function(pagenums, city) {
 	//publish all N pageNums to the exchange to route to the queue
 	for (var i = 1; i <= pagenums; i++) {
-		exchange.publish('pagenums', { pagenum: i, city: city }); //routingKey, message
+		exchange.publish(publishRoutingKey, { pagenum: i, city: city }); //routingKey, message
 	}
 	nextItem();
 };
