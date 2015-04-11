@@ -53,7 +53,8 @@ var queueOrExchangeReady = function(type) {
 };
 
 var subscribeToQueue = function() {
-	queue.subscribe({ack: true}, messageReceiver); //subscribe to queue
+	queue.subscribe({ack: true}); //subscribe to queue
+	queue.on('message', messageReceiver);
 };
 
 var messageReceiver = function(message, headers, deliveryInfo, messageObject) {
