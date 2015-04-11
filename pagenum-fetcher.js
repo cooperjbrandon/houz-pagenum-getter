@@ -1,6 +1,6 @@
 var http, clc, rabbit, beginSetup, handlePageNums;
 
-http = require('http');
+request = require('request');
 clc = require('cli-color');
 rabbit = require('./rabbit-management');
 
@@ -12,20 +12,15 @@ var beginFetchOfPageNums = function(message, headers, deliveryInfo, messageObjec
 }
 
 var fetchPropertyPageNums = function(city) {
-	// san-jose-ca
+	// city ex: san-jose-ca
 	var url = 'http://www.zillow.com/'+city+'/1_p/';
-	http.get(url, function(result) {
-		var html = '';
-		console.log('STATUS: ' + result.statusCode);
-		result.on('data', function(chunk) {
-			html += new Buffer(chunk).toString('utf8');
-		});
-		result.on('end', function() {
-			var totalPages = parsePageNums(html)
+	request.get(url, function(error, response, body) {
+		if (error) {
+			console.log("Got error: " + error.message);
+		} else {
+			var totalPages = parsePageNums(body)
 			handlePageNums(totalPages, city);
-		});
-	}).on('error', function(e) {
-		console.log("Got error: " + e.message);
+		}
 	});
 };
 
