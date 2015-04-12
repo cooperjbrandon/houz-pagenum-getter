@@ -34,7 +34,7 @@ describe('Page Numbers', function() {
 			expect(spy.callCount).to.equal(20);
 			stubqueue.emit('message', {city: 'san-francisco-ca'});
 			helpers.wait().then(function() {
-				expect(spy.callCount).to.equal(40);
+				expect(spy.callCount).to.equal(26);
 				done();
 			});
 		});
