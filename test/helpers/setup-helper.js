@@ -2,6 +2,7 @@
 var sinon = require('sinon');
 var nock = require('nock');
 var amqp = require('amqp');
+var RSVP = require('rsvp');
 
 //Files
 var Connection = require('amqp/lib/connection');
@@ -11,6 +12,7 @@ var config = require('houz-config');
 
 //Stub Response
 var html1 = require('../html-stub/html1').html;
+var html2 = require('../html-stub/html2').html;
 
 //stubs
 var stubconn, stubexch, stubqueue, spy, sandbox;
@@ -50,21 +52,18 @@ var before = function() {
 	stubexch.emit('open');
 	stubqueue.emit('open');
 	stubqueue.emit('queueBindOk');
+
+	return stubqueue;
 };
 
-var beforeEach = function(done) {
+var beforeEach = function() {
 	//mock the request
 	nock('http://www.zillow.com').get('/san-jose-ca/1_p/').reply(200, html1);
-
+	nock('http://www.zillow.com').get('/san-francisco-ca/1_p/').reply(200, html2);
+	
 	//spy on exchange.publish
 	spy = sandbox.spy(stubexch, 'publish');
-	// spy = sandbox.spy(stubexch, 'publish');
 
-	stubqueue.emit('message', { city: 'san-jose-ca' });
-	setTimeout(function() {
-		// wait for nock to return
-		done();
-	},15);
 	return spy;
 };
 
@@ -78,7 +77,17 @@ var afterEach = function() {
 	spy.restore();
 };
 
+var wait = function(cb) {
+	//the purpose of 'wait' is to wait for the nock to return
+	//'nock', is stubbed, but is async so it throws the run loop in a mess
+	var promise = new RSVP.Promise(function(resolve, reject) {
+		setTimeout(resolve, 15);
+	});
+	return promise;
+};
+
 module.exports.before = before;
 module.exports.beforeEach = beforeEach;
 module.exports.after = after;
 module.exports.afterEach = afterEach;
+module.exports.wait = wait;
