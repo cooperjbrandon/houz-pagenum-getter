@@ -16,7 +16,7 @@ var html2 = require('../html-stub/html2').html;
 
 //stubs
 var stubconn, stubexch, stubqueue, spy, sandbox;
-var spy;
+
 var before = function() {
 	//create sinon sandbox
 	sandbox = sinon.sandbox.create();
@@ -59,8 +59,8 @@ var before = function() {
 var beforeEach = function() {
 	//mock the request
 	nock('http://www.zillow.com').get('/san-jose-ca/1_p/').reply(200, html1);
-	nock('http://www.zillow.com').get('/san-francisco-ca/1_p/').reply(200, html2);
-	
+	nock('http://www.zillow.com').get('/san-mateo-ca/1_p/').reply(200, html2);
+
 	//spy on exchange.publish
 	spy = sandbox.spy(stubexch, 'publish');
 

@@ -32,7 +32,7 @@ describe('Page Numbers', function() {
 		stubqueue.emit('message', { city: 'san-jose-ca' });
 		helpers.wait().then(function() {
 			expect(spy.callCount).to.equal(20);
-			stubqueue.emit('message', {city: 'san-francisco-ca'});
+			stubqueue.emit('message', {city: 'san-mateo-ca'});
 			helpers.wait().then(function() {
 				expect(spy.callCount).to.equal(26);
 				done();
@@ -46,7 +46,7 @@ describe('Page Numbers', function() {
 		helpers.wait().then(function() {
 			secondTest(city, 0);
 
-			city = 'san-francisco-ca'; //now emit with new city
+			city = 'san-mateo-ca'; //now emit with new city
 			stubqueue.emit('message', { city: city });
 			helpers.wait().then(function() {
 				secondTest(city, 20);
