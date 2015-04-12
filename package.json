@@ -1,5 +1,5 @@
 {
-  "name": "houz-pagenum-getter",
+  "name": "houz-pagenumz",
   "version": "1.0.0",
   "description": "microservice get pagenums for each city",
   "main": "pagenum-fetcher.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cooperjbrandon/houz-pagenum-getter.git"
+    "url": "https://github.com/cooperjbrandon/houz-pagenumz.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cooperjbrandon/houz-pagenum-getter/issues"
+    "url": "https://github.com/cooperjbrandon/houz-pagenumz/issues"
   },
-  "homepage": "https://github.com/cooperjbrandon/houz-pagenum-getter",
+  "homepage": "https://github.com/cooperjbrandon/houz-pagenumz",
   "dependencies": {
     "amqp": "^0.2.4",
     "cli-color": "^0.3.3",
