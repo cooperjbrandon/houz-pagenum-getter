@@ -77,7 +77,7 @@ var afterEach = function() {
 	spy.restore();
 };
 
-var wait = function(cb) {
+var wait = function() {
 	//the purpose of 'wait' is to wait for the nock to return
 	//'nock', is stubbed, but is async so it throws the run loop in a mess
 	var promise = new RSVP.Promise(function(resolve, reject) {
