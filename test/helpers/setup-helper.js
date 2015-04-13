@@ -70,11 +70,11 @@ var beforeEach = function() {
 var after = function() {
 	sandbox.restore();
 	nock.restore();
-	nock.cleanAll();
 };
 
 var afterEach = function() {
 	spy.restore();
+	nock.cleanAll();
 };
 
 var wait = function() {

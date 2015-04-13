@@ -10,6 +10,8 @@ var config = require('houz-config');
 
 var spy, stubqueue;
 
+var messageToSend = { city: 'city' };
+
 describe('Page Numbers', function() {
 	
 	before('stub out request & amqp and begin connection', function() {
@@ -27,12 +29,19 @@ describe('Page Numbers', function() {
 	after('restore all', function() {
 		helpers.after();
 	});
+
+	it('recieves the correct message structure', function() {
+		expect(messageToSend).to.have.all.keys(config.messageExpectations.cities);
+	});
 	
 	it('publishes to the exchange for each page number for each city', function (done) {
-		stubqueue.emit('message', { city: 'san-jose-ca' });
+		messageToSend.city = 'san-jose-ca';
+		stubqueue.emit('message', messageToSend);
 		helpers.wait().then(function() {
 			expect(spy.callCount).to.equal(20);
-			stubqueue.emit('message', {city: 'san-mateo-ca'});
+
+			messageToSend.city = 'san-mateo-ca';
+			stubqueue.emit('message', messageToSend);
 			helpers.wait().then(function() {
 				expect(spy.callCount).to.equal(26);
 				done();
@@ -41,15 +50,14 @@ describe('Page Numbers', function() {
 	});
 
 	it('should publish to the exchange with the correct routingKey and message for each city', function (done) {
-		var city = 'san-jose-ca';
-		stubqueue.emit('message', { city: city });
+		messageToSend.city = 'san-jose-ca';
+		stubqueue.emit('message', messageToSend);
 		helpers.wait().then(function() {
-			secondTest(city, 0);
-
-			city = 'san-mateo-ca'; //now emit with new city
-			stubqueue.emit('message', { city: city });
+			testRoutingKeyandMessage(messageToSend.city, 0);
+			messageToSend.city = 'san-mateo-ca'; //now emit with new city
+			stubqueue.emit('message', messageToSend);
 			helpers.wait().then(function() {
-				secondTest(city, 20);
+				testRoutingKeyandMessage(messageToSend.city, 20);
 				done();
 			});
 		});
@@ -57,7 +65,7 @@ describe('Page Numbers', function() {
 
 });
 
-var secondTest = function(city, startingPoint) {
+var testRoutingKeyandMessage = function(city, startingPoint) {
 	var expectedRoutingKey = config.routingKey.pages;
 	var expectedMessageStructure = config.messageExpectations.pages;
 
@@ -66,27 +74,21 @@ var secondTest = function(city, startingPoint) {
 		var page = startingPoint === 0 ? i + 1: i + 1 - startingPoint;
 		
 		expect(args[0]).to.equal(expectedRoutingKey);
-		correctStructureOfMessage(args[1], expectedMessageStructure, page, city);
+		correctStructureOfMessage(args[1], expectedMessageStructure, {pagenum: page, city: city});
 	};
 };
 
-var correctStructureOfMessage = function(message, expectedMessage, pagenum, cityName) {
-	var messageKeys = Object.keys(message);
-	var expectedMessageKeys = Object.keys(expectedMessage);
-	
-	//verify that the number of properties are the same
-	expect(messageKeys).to.have.length(expectedMessageKeys.length);
+var correctStructureOfMessage = function(message, expectedMessageStructure, expectedMessage) {
+	//expected message structure comes from config, which is used in other repos as well
+	//expected message is what we actually expect
+
+	//the target object must both contain all of the passed-in keys AND the number of keys
+	//in the target object must match the number of keys passed in (in other words, a target
+	//object must have all and only all of the passed-in keys)
+	expect(message).to.have.all.keys(expectedMessageStructure);
 
 	//verify that the message has the expected properties
-	for (var i = 0; i < expectedMessageKeys.length; i++) {
-		var key = expectedMessageKeys[i];
-		if (key === 'pagenum') {
-			expect(message).to.have.property(key, pagenum);
-		} else if (key === 'city') {
-			expect(message).to.have.property(key, cityName);			
-		} else {
-			//should be only those two key names. if not throw error
-			throw new Error('there should not be another key name other than "city" and "pagenum"');
-		}
+	for (var key in message) {
+		expect(message).to.have.property(key, expectedMessage[key]);
 	}
 };
