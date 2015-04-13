@@ -71,7 +71,7 @@ var testRoutingKeyandMessage = function(city, startingPoint) {
 
 	for (var i = startingPoint; i < spy.callCount; i++) {
 		var args = spy.args[i];
-		var page = startingPoint === 0 ? i + 1: i + 1 - startingPoint;
+		var page = i + 1 - startingPoint;
 		
 		expect(args[0]).to.equal(expectedRoutingKey);
 		correctStructureOfMessage(args[1], expectedMessageStructure, {pagenum: page, city: city});
