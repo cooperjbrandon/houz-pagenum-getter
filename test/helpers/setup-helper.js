@@ -2,7 +2,6 @@
 var sinon = require('sinon');
 var nock = require('nock');
 var amqp = require('amqp');
-var RSVP = require('rsvp');
 
 //Files
 var Connection = require('amqp/lib/connection');
@@ -77,13 +76,10 @@ var afterEach = function() {
 	nock.cleanAll();
 };
 
-var wait = function() {
+var wait = function(cb) {
 	//the purpose of 'wait' is to wait for the nock to return
 	//'nock', is stubbed, but is async so it throws the run loop in a mess
-	var promise = new RSVP.Promise(function(resolve, reject) {
-		setTimeout(resolve, 15);
-	});
-	return promise;
+	setTimeout(cb, 15);
 };
 
 module.exports.before = before;

@@ -37,12 +37,12 @@ describe('Page Numbers', function() {
 	it('publishes to the exchange for each page number for each city', function (done) {
 		messageToSend.city = 'san-jose-ca';
 		stubqueue.emit('message', messageToSend);
-		helpers.wait().then(function() {
+		helpers.wait(function() {
 			expect(spy.callCount).to.equal(20);
 
 			messageToSend.city = 'san-mateo-ca';
 			stubqueue.emit('message', messageToSend);
-			helpers.wait().then(function() {
+			helpers.wait(function() {
 				expect(spy.callCount).to.equal(26);
 				done();
 			});
@@ -52,11 +52,11 @@ describe('Page Numbers', function() {
 	it('should publish to the exchange with the correct routingKey and message for each city', function (done) {
 		messageToSend.city = 'san-jose-ca';
 		stubqueue.emit('message', messageToSend);
-		helpers.wait().then(function() {
+		helpers.wait(function() {
 			testRoutingKeyandMessage(messageToSend.city, 0);
 			messageToSend.city = 'san-mateo-ca'; //now emit with new city
 			stubqueue.emit('message', messageToSend);
-			helpers.wait().then(function() {
+			helpers.wait(function() {
 				testRoutingKeyandMessage(messageToSend.city, 20);
 				done();
 			});
