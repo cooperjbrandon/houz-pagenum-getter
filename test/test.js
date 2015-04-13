@@ -10,7 +10,7 @@ var config = require('houz-config');
 
 var spy, stubqueue;
 
-var messageToSend = { city: 'city' };
+var messageFromRabbit = { city: 'city' };
 
 describe('Page Numbers', function() {
 	
@@ -31,17 +31,17 @@ describe('Page Numbers', function() {
 	});
 
 	it('recieves the correct message structure', function() {
-		expect(messageToSend).to.have.all.keys(config.messageExpectations.cities);
+		expect(messageFromRabbit).to.have.all.keys(config.messageExpectations.cities);
 	});
 	
 	it('publishes to the exchange for each page number for each city', function (done) {
-		messageToSend.city = 'san-jose-ca';
-		stubqueue.emit('message', messageToSend);
+		messageFromRabbit.city = 'san-jose-ca';
+		stubqueue.emit('message', messageFromRabbit);
 		helpers.wait(function() {
 			expect(spy.callCount).to.equal(20);
 
-			messageToSend.city = 'san-mateo-ca';
-			stubqueue.emit('message', messageToSend);
+			messageFromRabbit.city = 'san-mateo-ca';
+			stubqueue.emit('message', messageFromRabbit);
 			helpers.wait(function() {
 				expect(spy.callCount).to.equal(26);
 				done();
@@ -50,14 +50,14 @@ describe('Page Numbers', function() {
 	});
 
 	it('should publish to the exchange with the correct routingKey and message for each city', function (done) {
-		messageToSend.city = 'san-jose-ca';
-		stubqueue.emit('message', messageToSend);
+		messageFromRabbit.city = 'san-jose-ca';
+		stubqueue.emit('message', messageFromRabbit);
 		helpers.wait(function() {
-			testRoutingKeyandMessage(messageToSend.city, 0);
-			messageToSend.city = 'san-mateo-ca'; //now emit with new city
-			stubqueue.emit('message', messageToSend);
+			testRoutingKeyandMessage(messageFromRabbit.city, 0);
+			messageFromRabbit.city = 'san-mateo-ca'; //now emit with new city
+			stubqueue.emit('message', messageFromRabbit);
 			helpers.wait(function() {
-				testRoutingKeyandMessage(messageToSend.city, 20);
+				testRoutingKeyandMessage(messageFromRabbit.city, 20);
 				done();
 			});
 		});
